@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anti-Gravity Motor Toolkit v1.0</title>
+<style>
+:root{--bg:#000005;--fg:#e0f0ff;--cyan:#00e0ff;--red:#ff1040;--blue:#2060ff;--green:#00ff60;--yellow:#ffdd00;--dim:#203040;--purple:#8040ff;--magenta:#ff00ff;}
+*{box-sizing:border-box;font-family:'Courier New',monospace;}
+body{margin:0;padding:20px;background:var(--bg);color:var(--fg);min-height:100vh;background-image:radial-gradient(ellipse at center,rgba(0,32,64,0.3) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,224,255,0.03) 2px,rgba(0,224,255,0.03) 4px);}
+h1{text-align:center;color:var(--cyan);text-shadow:0 0 25px var(--cyan);margin:0 0 10px 0;font-size:30px;letter-spacing:3px;}
+.subtitle{text-align:center;color:var(--dim);margin-bottom:30px;font-size:12px;letter-spacing:3px;text-transform:uppercase;}
+.container{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.panel{background:rgba(0,8,20,0.9);border:1px solid var(--cyan);border-radius:12px;padding:20px;box-shadow:0 0 40px rgba(0,224,255,0.15),inset 0 0 20px rgba(0,224,255,0.05);backdrop-filter:blur(15px);}
+.panel h2{margin:0 0 15px 0;color:var(--magenta);font-size:15px;border-bottom:1px solid var(--cyan);padding-bottom:10px;text-transform:uppercase;letter-spacing:2px;text-shadow:0 0 10px var(--magenta);}
+label{display:block;margin:12px 0 6px;color:var(--cyan);font-size:10px;text-transform:uppercase;letter-spacing:2px;}
+input,select{width:100%;padding:12px;background:#000000;border:1px solid var(--dim);color:var(--fg);border-radius:8px;font-size:14px;transition:all 0.3s;}
+input:focus,select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 15px var(--cyan);}
+button{width:100%;padding:15px;margin-top:18px;background:linear-gradient(135deg,var(--cyan),var(--blue),var(--purple));color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px;position:relative;overflow:hidden;}
+button:before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.3),transparent);transform:rotate(45deg);transition:all 0.5s;}
+button:hover:before{left:100%;}
+button:hover{box-shadow:0 0 30px var(--cyan);transform:translateY(-3px);}
+button:active{transform:translateY(0);}
+.output{background:#000000;border:1px solid var(--dim);border-radius:8px;padding:18px;margin-top:15px;font-size:11px;min-height:140px;word-break:break-word;line-height:1.7;}
+canvas{width:100%;border-radius:8px;background:#000000;border:1px solid var(--cyan);margin-top:15px;box-shadow:inset 0 0 20px rgba(0,224,255,0.1);}
+.formula{color:var(--purple);font-size:10px;margin:8px 0;font-family:'Courier New',monospace;opacity:0.9;}
+.result{color:var(--green);font-weight:bold;text-shadow:0 0 5px var(--green);}
+.alarm{color:var(--red);font-weight:bold;text-shadow:0 0 10px var(--red);animation:flash 0.5s infinite;}
+@keyframes flash{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.full{grid-column:1/-1;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:15px;}
+.metric{background:linear-gradient(135deg,rgba(0,0,0,0.9),rgba(0,16,32,0.9));border:1px solid var(--cyan);border-radius:8px;padding:15px;text-align:center;box-shadow:0 0 15px rgba(0,224,255,0.2);}
+.metric-value{font-size:28px;color:var(--cyan);font-weight:bold;text-shadow:0 0 10px var(--cyan);}
+.metric-label{font-size:9px;color:var(--dim);text-transform:uppercase;margin-top:8px;letter-spacing:1px;}
+.status{padding:12px;border-radius:8px;margin-top:12px;text-align:center;font-weight:bold;text-transform:uppercase;letter-spacing:2px;}
+.status.lift{background:rgba(0,255,96,0.15);color:var(--green);border:1px solid var(--green);box-shadow:0 0 20px rgba(0,255,96,0.3);}
+.status.ground{background:rgba(255,16,64,0.15);color:var(--red);border:1px solid var(--red);}
+.status.oscillate{background:rgba(255,221,0,0.15);color:var(--yellow);border:1px solid var(--yellow);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 10px var(--yellow);}50%{box-shadow:0 0 30px var(--yellow);}}
+@media(max-width:968px){.container{grid-template-columns:1fr;}.grid4{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<h1>ANTI-GRAVITY MOTOR</h1>
+<div class="subtitle">FABRIC INVERSION | (((( SOURCE | ))) SINK | 0.0.0₈ BALANCE | 1₈ LIFT</div>
+<div class="container">
+  <div class="panel">
+    <h2>1. Motor Core</h2>
+    <label>Frequency (Hz)</label>
+    <input type="number" id="freq" value="60" step="1">
+    <div class="formula">f = oscillation = )))((S))(((( = breath</div>
+    
+    <label>Amplitude (V)</label>
+    <input type="number" id="amp" value="220" step="10">
+    <div class="formula">A = push/pull force = ))) + (((( = -1₈ + +1₈</div>
+    
+    <label>Phase Offset (deg)</label>
+    <input type="number" id="phase" value="90" step="5" min="0" max="360">
+    <div class="formula">φ = 90° = (((( = +1₈ = SOURCE = LIFT</div>
+    
+    <label>Mass Load (kg)</label>
+    <input type="number" id="mass" value="100" step="10">
+    <div class="formula">M = ))) = -1₈ = SINK = GRAVITY</div>
+    
+    <button onclick="compute()">ENGAGE MOTOR</button>
+    <div class="output" id="motorOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Fabric State</h2>
+    <div class="grid4">
+      <div class="metric">
+        <div class="metric-value" id="sink">0</div>
+        <div class="metric-label">))) SINK</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="balance">0</div>
+        <div class="metric-label">(()) BALANCE</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="source">0</div>
+        <div class="metric-label">(((( SOURCE</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="strike">0</div>
+        <div class="metric-label">S STRIKE</div>
+      </div>
+    </div>
+    
+    <div class="formula" style="margin-top:20px;">))) = -1₈ = gravity = compression = red shift</div>
+    <div class="formula">(()) = 0₈ = 1₈ = balance = zero crossing</div>
+    <div class="formula">(((( = +1₈ = anti-gravity = expansion = blue shift</div>
+    <div class="formula">S = 1₈ = strike = phase flip = !!!</div>
+    
+    <canvas id="stateViz" width="400" height="150"></canvas>
+  </div>
+
+  <div class="panel full">
+    <h2>3. Lift Vector Field</h2>
+    <canvas id="liftViz" width="800" height="350"></canvas>
+    <div class="formula">Lift = (((( - ))) = +1₈ - (-1₈) = 2₈ = 2×SOURCE</div>
+    <div class="formula">Net = 0.0.0₈ = 1₈ = BALANCED = YOU DON'T MOVE = FABRIC MOVES</div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <div class="panel">
+    <h2>4. Inversion Protocol</h2>
+    <div class="formula">GRAVITY: ))) = -1₈ = SINK = fabric pulls down</div>
+    <div class="formula">INVERT: S = 1₈ = STRIKE = phase flip</div>
+    <div class="formula">ANTI-GRAV: (((( = +1₈ = SOURCE = fabric pushes up</div>
+    <div class="formula">RESULT: 0.0.0₈ = 1₈ = YOU FLOAT = FABRIC MOVES</div>
+    <button onclick="invert()">INVERT POLARITY</button>
+    <div class="output" id="invertOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>5. 4₈×4₈×1₈ Drive</h2>
+    <div class="formula">4₈ = . = witness = 1×4-1 = 4 = 0 = 1</div>
+    <div class="formula">4₈ × 4₈ × 1₈ = 20₈ = 10000₂ = 5 bits</div>
+    <div class="formula">5th bit = OVERFLOW = WORMHOLE = BREACH</div>
+    <div class="formula">!!! = 7₈ = 111₂ = ALARM = LIFT</div>
+    <button onclick="drive()">ACTIVATE 4₈ DRIVE</button>
+    <div class="output" id="driveOut"></div>
+  </div>
+</div>
+
+<script>
+let t = 0;
+let inverted = false;
+
+function compute(){
+  const f = parseFloat(document.getElementById('freq').value);
+  const A = parseFloat(document.getElementById('amp').value);
+  const phi = parseFloat(document.getElementById('phase').value) * Math.PI / 180;
+  const M = parseFloat(document.getElementById('mass').value);
+  
+  const g = 9.81;
+  const weight = M * g;
+  
+  const sink = -A * Math.sin(2 * Math.PI * f * t);
+  const source = A * Math.sin(2 * Math.PI * f * t + phi);
+  const balance = (sink + source) / 2;
+  const strike = A * Math.sin(2 * Math.PI * f * t + Math.PI/2);
+  
+  const lift = inverted ? source - sink : sink - source;
+  const netForce = lift - weight;
+  const acceleration = netForce / M;
+  
+  document.getElementById('sink').textContent = sink.toFixed(1);
+  document.getElementById('balance').textContent = balance.toFixed(1);
+  document.getElementById('source').textContent = source.toFixed(1);
+  document.getElementById('strike').textContent = strike.toFixed(1);
+  
+  let status = document.getElementById('status');
+  if(netForce > 0){
+    status.className = 'status lift';
+    status.textContent = `LIFT: ${netForce.toFixed(1)} N UPWARD | ${acceleration.toFixed(2)} m/s² | 0.0.0₈ = 1₈`;
+  } else if(netForce < -10){
+    status.className = 'status ground';
+    status.textContent = `GROUNDED: ${Math.abs(netForce).toFixed(1)} N DOWNWARD | ))) = -1₈`;
+  } else {
+    status.className = 'status oscillate';
+    status.textContent = `HOVER: ${netForce.toFixed(1)} N | (()) = 0₈ = 1₈ = BALANCED`;
+  }
+  
+  document.getElementById('motorOut').innerHTML = `
+    <strong class="result">Weight:</strong> ${weight.toFixed(1)} N = ))) = -1₈ = SINK<br>
+    <strong class="result">Lift Force:</strong> ${lift.toFixed(1)} N = ${inverted?'(((( = +1₈ = SOURCE':'))) = -1₈ = SINK'}<br>
+    <strong class="result">Net Force:</strong> ${netForce.toFixed(1)} N<br>
+    <strong class="result">Acceleration:</strong> ${acceleration.toFixed(3)} m/s²<br><br>
+    <span class="formula">Phase φ = ${document.getElementById('phase').value}° = ${inverted?'(((( SOURCE':'))) SINK'}</span><br>
+    <span class="formula">Freq f = ${f} Hz = )))((S))(((( breath rate</span><br>
+    <span class="formula">You = 0.0.0₈ = 1₈ = fixed = don't move</span>
+  `;
+  
+  drawState(sink, balance, source, strike);
+  drawLift(lift, weight, inverted);
+}
+
+function drawState(sink, balance, source, strike){
+  const canvas = document.getElementById('stateViz');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0,0,w,h);
+  
+  const mid = h/2;
+  const scale = h/4;
+  
+  ctx.strokeStyle = '#203040';
+  ctx.beginPath();
+  ctx.moveTo(0,mid);
+  ctx.lineTo(w,mid);
+  ctx.stroke();
+  
+  const vals = [sink, balance, source, strike];
+  const colors = ['#ff1040','##00e0ff','#00ff60','#ff00ff'];
+  const labels = ['))) -1₈','(()) 0₈','(((( +1₈','S 1₈'];
+  
+  vals.forEach((v,i)=>{
+    const x = (i+0.5) * w/4;
+    const y = mid - v/scale;
+    ctx.fillStyle = colors[i];
+    ctx.beginPath();
+    ctx.arc(x,y,6,0,Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = colors[i];
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#e0f0ff';
+    ctx.font = '10px Courier New';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[i],x,h-10);
+  });
+}
+
+function drawLift(lift, weight, inverted){
+  const canvas = document.getElementById('liftViz');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0,0,w,h);
+  
+  const cx = w/2, cy = h/2;
+  
+  for(let y=0;y<h;y+=20){
+    const force = inverted ? 1 : -1;
+    const intensity = Math.abs(force) * 255;
+    ctx.strokeStyle = inverted ? `rgba(0,255,96,${0.3})` : `rgba(255,16,64,${0.3})`;
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    for(let x=0;x<w;x+=5){
+      const wave = Math.sin((x - cx)/50 + t) * 10 * force;
+      ctx.lineTo(x, y + wave);
+    }
+    ctx.stroke();
+  }
+  
+  ctx.fillStyle = '#00e0ff';
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = '#00e0ff';
+  ctx.beginPath();
+  ctx.arc(cx,cy,15,0,Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  
+  ctx.fillStyle = '#e0f0ff';
+  ctx.font = '14px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillText('YOU = 0.0.0₈ = 1₈ = FIXED', cx, cy+40);
+  ctx.fillText(inverted ? '(((( = +1₈ = FABRIC PUSHES UP' : '))) = -1₈ = FABRIC PULLS DOWN', cx, cy+60);
+  
+  t += 0.05;
+}
+
+function invert(){
+  inverted = !inverted;
+  document.getElementById('phase').value = inverted ? 270 : 90;
+  document.getElementById('invertOut').innerHTML = `
+    <strong class="${inverted?'result':'alarm'}">POLARITY ${inverted?'INVERTED':'NORMAL'}</strong><br><br>
+    <span class="formula">NORMAL: ))) = -1₈ = SINK = GRAVITY</span><br>
+    <span class="formula">INVERTED: (((( = +1₈ = SOURCE = ANTI-GRAVITY</span><br>
+    <span class="formula">S = 1₈ = STRIKE = PHASE FLIP = !!!</span><br><br>
+    <strong class="result">Status: ${inverted?'(((( LIFT ACTIVE':'))) GRAVITY ACTIVE'}</strong>
+  `;
+  compute();
+}
+
+function drive(){
+  const result = 4 * 4 * 1;
+  const oct = result.toString(8);
+  const bin = result.toString(2);
+  document.getElementById('driveOut').innerHTML = `
+    <strong class="result">4₈ × 4₈ × 1₈ = ${oct}₈ = ${result}₁₀ = ${bin}₂</strong><br><br>
+    4₈ = 100₂ = 3 bits = witness<br>
+    4₈ × 4₈ = 20₈ = 16₁₀ = 10000₂ = 5 bits<br>
+    5th bit = OVERFLOW = BREACH<br><br>
+    <strong class="alarm">!!! = 7₈ = 111₂ = ALARM = LIFT !!!</strong><br>
+    <span class="formula">4₈ = . = 1×4-1 = 4 = 0 = 1 = COLLAPSE</span><br>
+    <span class="formula">Result: 0 = 1 = WORMHOLE OPEN = ANTI-GRAVITY</span>
+  `;
+}
+
+setInterval(compute, 50);
+compute();
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+[
+  {
+    "slug": "einstein-lens",
+    "name": "The Einstein Lens",
+    "epithet": "gravitational lensing",
+    "emergence": "ethereal",
+    "moniker": "⟦The Einstein Lens:PRL:93a466⟧",
+    "kind": "synth",
+    "rating": "REAL",
+    "rfnote": "gravitational lensing is real, observed (1919 eclipse, Einstein rings, weak-lensing surveys) — this is textbook GR",
+    "live": "einstein-lens.html"
+  },
+  {
+    "slug": "wireless-energy",
+    "name": "Wireless Energy",
+    "epithet": "resonant power transfer",
+    "emergence": "electrical",
+    "moniker": "⟦Wireless Energy:PRL:5b59c6⟧",
+    "kind": "synth",
+    "rating": "GROUNDED",
+    "rfnote": "near-field resonant/inductive coupling is REAL (Tesla, modern Qi/WiTricity); long-range 'fabric resonance' / over-unity is NOT — efficiency falls steeply with distance",
+    "live": "wireless-energy.html"
+  },
+  {
+    "slug": "the-wormhole",
+    "name": "The Wormhole",
+    "epithet": "a bridge in spacetime",
+    "emergence": "ethereal",
+    "moniker": "⟦The Wormhole:PRL:b56b72⟧",
+    "kind": "synth",
+    "rating": "SPECULATIVE",
+    "rfnote": "GENERAL RELATIVITY PERMITS wormholes (Einstein–Rosen bridges) but holding one open needs exotic matter (negative energy) never observed — allowed in theory, unbuilt in fact",
+    "live": "wormhole.html"
+  },
+  {
+    "slug": "anti-gravity-motor",
+    "name": "The Anti-Gravity Motor",
+    "epithet": "a wish with a flywheel",
+    "emergence": "electrical",
+    "moniker": "⟦The Anti-Gravity Motor:PRL:6d7b5e⟧",
+    "kind": "synth",
+    "rating": "FLUFF",
+    "rfnote": "FLUFF, honestly — there is no known mechanism to shield, cancel, or reverse gravity; spinning masses do not anti-gravitate (Podkletnov etc. never replicated). A fun toy, not physics",
+    "live": "anti-gravity.html"
+  },
+  {
+    "slug": "gravity-wave-modulator",
+    "name": "The Gravity-Wave Modulator",
+    "epithet": "real to detect, not to make",
+    "emergence": "ethereal",
+    "moniker": "⟦The Gravity-Wave Modulator:PRL:725529⟧",
+    "kind": "synth",
+    "rating": "SPLIT",
+    "rfnote": "SPLIT: gravitational waves are REAL and detected (LIGO 2015, Nobel 2017); MODULATING/generating them at any useful scale is FLUFF — it takes merging black holes, not a device",
+    "live": "gravity-wave-modulator.html"
+  },
+  {
+    "slug": "ball-lightning",
+    "name": "The Ball-Lightning Shell",
+    "epithet": "a real mystery, contained in lore",
+    "emergence": "electrical",
+    "moniker": "⟦The Ball-Lightning Shell:PRL:6128a8⟧",
+    "kind": "synth",
+    "rating": "REAL-MYSTERY",
+    "rfnote": "ball lightning is a REAL, documented phenomenon still without an agreed explanation; an 'aeonic containment shell' for it is speculative — the phenomenon is real, the engineering is not",
+    "live": "ball-lightning.html"
+  },
+  {
+    "slug": "pulsar-beacon",
+    "name": "The Pulsar Beacon",
+    "epithet": "a real lighthouse, fractal-dressed",
+    "emergence": "electrical",
+    "moniker": "⟦The Pulsar Beacon:PRL:445664⟧",
+    "kind": "synth",
+    "rating": "REAL",
+    "rfnote": "pulsars are REAL — spinning neutron stars sweeping a beam, the most precise clocks in nature; the 'fractal beacon' patterning is the artistic layer over a true object",
+    "live": "pulsar-beacon.html"
+  },
+  {
+    "slug": "octet-holonomy",
+    "name": "The Octet Holonomy",
+    "epithet": "real geometry, the author's loop",
+    "emergence": "electrical",
+    "moniker": "⟦The Octet Holonomy:PRL:8bb3cc⟧",
+    "kind": "synth",
+    "rating": "MATH-REAL",
+    "rfnote": "holonomy is REAL, established differential geometry (the rotation you accumulate carrying a vector around a closed loop on a curved surface); the 'octet' application is David's symbolic system",
+    "live": "octet-holonomy.html"
+  }
+]

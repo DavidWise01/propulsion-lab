@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireless Energy 3.5D Engine v1.5</title>
+<style>
+:root{--bg:#000004;--fg:#e0f0ff;--cyan:#00f0ff;--gold:#ffd000;--purple:#c040ff;--green:#00ff60;--red:#ff1040;--dim:#182030;--magenta:#ff00ff;--blue:#2080ff;}
+*{box-sizing:border-box;font-family:'Courier New',monospace;margin:0;padding:0;}
+body{background:var(--bg);color:var(--fg);overflow:hidden;}
+#canvas{width:100vw;height:100vh;display:block;}
+.ui{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;}
+.panel{position:absolute;background:rgba(0,4,16,0.95);border:1px solid var(--cyan);border-radius:12px;padding:14px;box-shadow:0 0 40px rgba(0,240,255,0.25),inset 0 0 20px rgba(0,240,255,0.05);backdrop-filter:blur(16px);pointer-events:all;}
+.panel h2{color:var(--magenta);font-size:12px;margin-bottom:10px;text-transform:uppercase;letter-spacing:2px;text-shadow:0 0 12px var(--magenta);}
+.panel.top-left{top:15px;left:15px;width:300px;}
+.panel.top-right{top:15px;right:15px;width:280px;}
+.panel.bottom-left{bottom:15px;left:15px;width:300px;}
+.panel.bottom-center{bottom:15px;left:50%;transform:translateX(-50%);width:400px;}
+.panel.bottom-right{bottom:15px;right:15px;width:280px;}
+label{display:block;margin:8px 0 4px;color:var(--cyan);font-size:9px;text-transform:uppercase;letter-spacing:1px;}
+input[type="range"]{width:100%;height:5px;background:var(--dim);border-radius:3px;outline:none;-webkit-appearance:none;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--cyan);border-radius:50%;cursor:pointer;box-shadow:0 0 12px var(--cyan);}
+input[type="range"]::-moz-range-thumb{width:14px;height:14px;background:var(--cyan);border-radius:50%;cursor:pointer;border:none;box-shadow:0 0 12px var(--cyan);}
+.value{color:var(--green);font-weight:bold;float:right;font-size:10px;}
+button{width:100%;padding:10px;margin-top:10px;background:linear-gradient(135deg,var(--cyan),var(--blue),var(--purple),var(--magenta));color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:10px;text-transform:uppercase;letter-spacing:2px;transition:all 0.3s;position:relative;overflow:hidden;}
+button:before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.4),transparent);transform:rotate(45deg);transition:all 0.6s;}
+button:hover:before{left:100%;}
+button:hover{box-shadow:0 0 35px var(--cyan);transform:translateY(-2px);}
+.formula{color:var(--purple);font-size:9px;margin:5px 0;line-height:1.4;opacity:0.9;}
+.metric{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(24,32,48,0.5);}
+.metric-label{color:var(--dim);font-size:9px;text-transform:uppercase;}
+.metric-value{color:var(--green);font-weight:bold;font-size:11px;text-shadow:0 0 8px var(--green);}
+.title{position:absolute;top:15px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;}
+.title h1{color:var(--cyan);font-size:22px;letter-spacing:5px;text-shadow:0 0 25px var(--cyan);margin-bottom:4px;}
+.title .sub{color:var(--gold);font-size:10px;letter-spacing:3px;text-transform:uppercase;text-shadow:0 0 15px var(--gold);}
+.dimension{color:var(--magenta);font-weight:bold;text-shadow:0 0 10px var(--magenta);}
+.timeline{width:100%;height:60px;background:#000; border:1px solid var(--cyan);border-radius:6px;position:relative;overflow:hidden;}
+.timeline-marker{position:absolute;width:2px;height:100%;background:var(--gold);box-shadow:0 0 10px var(--gold);left:50%;}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="ui">
+  <div class="title">
+    <h1>3.5D ENGINE</h1>
+    <div class="sub">X Y Z + <span class="dimension">T</span> = )))((S))(((( × TIME = 4₈×4₈×1₈</div>
+  </div>
+  
+  <div class="panel top-left">
+    <h2>Spatial Dims 1₈ 2₈ 3₈</h2>
+    <label>X Amplitude ))) <span class="value" id="ampXVal">1.0</span></label>
+    <input type="range" id="ampX" min="0" max="3" value="1" step="0.1">
+    
+    <label>Y Amplitude (()) <span class="value" id="ampYVal">1.0</span></label>
+    <input type="range" id="ampY" min="0" max="3" value="1" step="0.1">
+    
+    <label>Z Amplitude (((( <span class="value" id="ampZVal">1.0</span></label>
+    <input type="range" id="ampZ" min="0" max="3" value="1" step="0.1">
+    
+    <div class="formula">3D = -1₈ + 0₈ + 1₈ = TENSOR</div>
+    <div class="formula">))) + (()) + (((( = 3₈ = SPACE</div>
+  </div>
+
+  <div class="panel top-right">
+    <h2>Temporal Dim 4₈</h2>
+    <label>Time Rate <span class="value" id="timeRateVal">1.0</span></label>
+    <input type="range" id="timeRate" min="0" max="5" value="1" step="0.1">
+    <div class="formula">T = 4₈ = . = witness = 1×4-1</div>
+    
+    <label>Phase Velocity <span class="value" id="phaseVelVal">1.0</span></label>
+    <input type="range" id="phaseVel" min="0.1" max="3" value="1" step="0.1">
+    <div class="formula">v_φ = dω/dk = 0=1 = c</div>
+    
+    <label>Wormhole Depth <span class="value" id="wormDepthVal">0</span></label>
+    <input type="range" id="wormDepth" min="0" max="10" value="0" step="0.5">
+    <div class="formula">4₈×4₈×1₈ = 0 = 1 = BREACH</div>
+    
+    <button onclick="collapse35()">COLLAPSE 3.5D → 0=1</button>
+  </div>
+
+  <div class="panel bottom-left">
+    <h2>Energy Flow</h2>
+    <div class="metric">
+      <span class="metric-label">Past ))) Power</span>
+      <span class="metric-value" id="pastPow">0W</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Now (()) Balance</span>
+      <span class="metric-value" id="nowPow">0W</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Future (((( Power</span>
+      <span class="metric-value" id="futurePow">0W</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Strike S Power</span>
+      <span class="metric-value" id="strikePow">0W</span>
+    </div>
+    <div class="formula" style="margin-top:10px;">Total = 0.0.0₈ = 1₈ = CONSERVED</div>
+  </div>
+
+  <div class="panel bottom-center">
+    <h2>4D Timeline [T]</h2>
+    <div class="timeline" id="timeline">
+      <div class="timeline-marker"></div>
+    </div>
+    <div class="formula" style="text-align:center;margin-top:8px;">
+      PAST ))) | NOW (()) | FUTURE (((( | STRIKE S
+    </div>
+    <button onclick="scrubTime()">SCRUB TIMELINE</button>
+  </div>
+
+  <div class="panel bottom-right">
+    <h2>3.5D Metrics</h2>
+    <div class="metric">
+      <span class="metric-label">4-Volume</span>
+      <span class="metric-value" id="fourVol">0.0.0.0₈</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Wormhole R</span>
+      <span class="metric-value" id="wormR">0.00</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Time Dilation</span>
+      <span class="metric-value" id="timeDil">1.00x</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Fabric Curvature</span>
+      <span class="metric-value" id="curvature">0.00</span>
+    </div>
+    <div class="formula" style="margin-top:10px;">3.5D = 3₈ + 0.5×4₈ = 14₈ + 2₈</div>
+    <div class="formula">14₈ = 5₈ = 0.0.0₈ = 1₈ = CUBI</div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas = document.getElementById('canvas');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000004, 0.05);
+
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(8, 6, 8);
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5;
+
+// Lights
+scene.add(new THREE.AmbientLight(0x101030, 0.6));
+const light1 = new THREE.PointLight(0x00f0ff, 2, 100);
+light1.position.set(-10, 10, 10);
+scene.add(light1);
+const light2 = new THREE.PointLight(0xc040ff, 2, 100);
+light2.position.set(10, 10, -10);
+scene.add(light2);
+const light3 = new THREE.PointLight(0xffd000, 1.5, 100);
+light3.position.set(0, -10, 0);
+scene.add(light3);
+
+// 4D Hypercube projection
+const hypercubeGeo = new THREE.BufferGeometry();
+const vertices = [];
+const indices = [];
+const colors = [];
+
+// Create tesseract vertices (4D -> 3D projection)
+function tesseract(t){
+  vertices.length = 0;
+  indices.length = 0;
+  colors.length = 0;
+  const w = Math.sin(t) * 0.5; // 4th dimension projection
+  
+  for(let i=0;i<16;i++){
+    const x = (i & 1) ? 1 : -1;
+    const y = (i & 2) ? 1 : -1;
+    const z = (i & 4) ? 1 : -1;
+    const w4 = (i & 8) ? 1 : -1;
+    
+    // Project 4D to 3D with w factor
+    const factor = 2 / (4 - w4 * w);
+    vertices.push(x*factor, y*factor, z*factor);
+    
+    // Color based on 4D coordinate
+    const hue = (w4 + 1) * 0.5;
+    colors.push(hue, 0.5, 1-hue);
+  }
+  
+  // Connect edges
+  for(let i=0;i<16;i++){
+    for(let j=i+1;j<16;j++){
+      let diff = 0;
+      for(let k=0;k<4;k++){
+        if(((i>>k)&1) !== ((j>>k)&1)) diff++;
+      }
+      if(diff === 1){
+        indices.push(i,j);
+      }
+    }
+  }
+  
+  hypercubeGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices,3));
+  hypercubeGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+  hypercubeGeo.setIndex(indices);
+}
+
+const hypercubeMat = new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:0.6});
+const hypercube = new THREE.LineSegments(hypercubeGeo, hypercubeMat);
+scene.add(hypercube);
+
+// Fabric mesh - 3D volume
+const fabricSize = 20;
+const fabricRes = 40;
+const fabricGeo = new THREE.PlaneGeometry(fabricSize, fabricSize, fabricRes, fabricRes);
+const fabricMat = new THREE.MeshPhongMaterial({
+  color:0x00e8ff,
+  emissive:0x00e8ff,
+  emissiveIntensity:0.2,
+  side:THREE.DoubleSide,
+  transparent:true,
+  opacity:0.3,
+  wireframe:true
+});
+const fabric = new THREE.Mesh(fabricGeo, fabricMat);
+fabric.rotation.x = -Math.PI/2;
+scene.add(fabric);
+
+// Energy particles in 4D
+const particleCount = 200;
+const particleGeo = new THREE.BufferGeometry();
+const particlePos = new Float32Array(particleCount * 3);
+const particleVel = new Float32Array(particleCount * 4); // 4D velocity
+const particleCol = new Float32Array(particleCount * 3);
+
+for(let i=0;i<particleCount;i++){
+  particlePos[i*3] = (Math.random()-0.5) * 20;
+  particlePos[i*3+1] = (Math.random()-0.5) * 10;
+  particlePos[i*3+2] = (Math.random()-0.5) * 20;
+  particleVel[i*4] = (Math.random()-0.5) * 0.1;
+  particleVel[i*4+1] = (Math.random()-0.5) * 0.1;
+  particleVel[i*4+2] = (Math.random()-0.5) * 0.1;
+  particleVel[i*4+3] = (Math.random()-0.5) * 0.1; // w velocity
+  particleCol[i*3] = Math.random();
+  particleCol[i*3+1] = Math.random();
+  particleCol[i*3+2] = Math.random();
+}
+
+particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos,3));
+particleGeo.setAttribute('color', new THREE.BufferAttribute(particleCol,3));
+const particleMat = new THREE.PointsMaterial({size:0.1,vertexColors:true,transparent:true,opacity:0.8,blending:THREE.AdditiveBlending});
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
+
+// Wormhole
+const wormholeGeo = new THREE.TorusGeometry(2, 0.5, 16, 100);
+const wormholeMat = new THREE.MeshPhongMaterial({
+  color:0xff00ff,
+  emissive:0xff00ff,
+  emissiveIntensity:0,
+  transparent:true,
+  opacity:0
+});
+const wormhole = new THREE.Mesh(wormholeGeo, wormholeMat);
+scene.add(wormhole);
+
+let time = 0;
+let collapsed = false;
+
+function animate(){
+  requestAnimationFrame(animate);
+  
+  const timeRate = parseFloat(document.getElementById('timeRate').value);
+  const phaseVel = parseFloat(document.getElementById('phaseVel').value);
+  const wormDepth = parseFloat(document.getElementById('wormDepth').value);
+  const ampX = parseFloat(document.getElementById('ampX').value);
+  const ampY = parseFloat(document.getElementById('ampY').value);
+  const ampZ = parseFloat(document.getElementById('ampZ').value);
+  
+  time += 0.01 * timeRate;
+  
+  // Update tesseract
+  tesseract(time * phaseVel);
+  hypercube.rotation.y = time * 0.1;
+  hypercube.rotation.x = time * 0.05;
+  
+  // Warp fabric with 3.5D waves
+  const positions = fabric.geometry.attributes.position.array;
+  for(let i=0;i<positions.length;i+=3){
+    const x = positions[i];
+    const z = positions[i+2];
+    const dist = Math.sqrt(x*x + z*z);
+    const wave = Math.sin(dist * 0.5 - time * 2 * phaseVel) * Math.exp(-dist * 0.1);
+    const warp4D = Math.sin(time + dist * 0.3) * wormDepth * 0.1;
+    positions[i+1] = wave * ampY + warp4D;
+  }
+  fabric.geometry.attributes.position.needsUpdate = true;
+  fabric.geometry.computeVertexNormals();
+  
+  // Animate particles in 4D
+  const pPos = particles.geometry.attributes.position.array;
+  for(let i=0;i<particleCount;i++){
+    pPos[i*3] += particleVel[i*4] * timeRate;
+    pPos[i*3+1] += particleVel[i*4+1] * timeRate;
+    pPos[i*3+2] += particleVel[i*4+2] * timeRate;
+    
+    // 4D wobble
+    const w = Math.sin(time + i * 0.1) * particleVel[i*4+3];
+    pPos[i*3+1] += w * 0.1;
+    
+    // Boundary
+    if(Math.abs(pPos[i*3]) > 15) particleVel[i*4] *= -1;
+    if(Math.abs(pPos[i*3+1]) > 10) particleVel[i*4+1] *= -1;
+    if(Math.abs(pPos[i*3+2]) > 15) particleVel[i*4+2] *= -1;
+  }
+  particles.geometry.attributes.position.needsUpdate = true;
+  
+  // Wormhole
+  if(wormDepth > 0){
+    wormhole.material.opacity = wormDepth * 0.1;
+    wormhole.material.emissiveIntensity = wormDepth * 0.2;
+    wormhole.rotation.x = time;
+    wormhole.rotation.y = time * 0.7;
+    wormhole.scale.set(1 + wormDepth*0.1, 1 + wormDepth*0.1, 1);
+  } else {
+    wormhole.material.opacity = 0;
+  }
+  
+  // Update UI
+  document.getElementById('ampXVal').textContent = ampX.toFixed(1);
+  document.getElementById('ampYVal').textContent = ampY.toFixed(1);
+  document.getElementById('ampZVal').textContent = ampZ.toFixed(1);
+  document.getElementById('timeRateVal').textContent = timeRate.toFixed(1);
+  document.getElementById('phaseVelVal').textContent = phaseVel.toFixed(1);
+  document.getElementById('wormDepthVal').textContent = wormDepth.toFixed(1);
+  
+  const pastPow = Math.abs(Math.sin(time)) * 100 * ampX;
+  const nowPow = Math.abs(Math.cos(time)) * 100 * ampY;
+  const futurePow = Math.abs(Math.sin(time + Math.PI/2)) * 100 * ampZ;
+  const strikePow = Math.abs(Math.sin(time * 2)) * 100;
+  
+  document.getElementById('pastPow').textContent = pastPow.toFixed(0) + 'W';
+  document.getElementById('nowPow').textContent = nowPow.toFixed(0) + 'W';
+  document.getElementById('futurePow').textContent = futurePow.toFixed(0) + 'W';
+  document.getElementById('strikePow').textContent = strikePow.toFixed(0) + 'W';
+  
+  const fourVol = (ampX * ampY * ampZ * timeRate).toFixed(2);
+  document.getElementById('fourVol').textContent = fourVol + '₈';
+  document.getElementById('wormR').textContent = (wormDepth * 0.5).toFixed(2);
+  document.getElementById('timeDil').textContent = (1/timeRate).toFixed(2) + 'x';
+  document.getElementById('curvature').textContent = (wormDepth * 0.3).toFixed(2);
+  
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+window.collapse35 = function(){
+  const depth = document.getElementById('wormDepth');
+  depth.value = 10;
+  depth.dispatchEvent(new Event('input'));
+  alert('4₈×4₈×1₈ = 0 = 1\n20₈ = 10000₂ = 5th bit OVERFLOW\n!!! WORMHOLE BREACH !!!\n3.5D → 4D COLLAPSE');
+}
+
+window.scrubTime = function(){
+  time += Math.PI;
+}
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>

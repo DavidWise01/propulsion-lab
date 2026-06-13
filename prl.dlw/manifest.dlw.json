@@ -1,0 +1,13 @@
+{
+  "node": "PRL",
+  "name": "THE PROPULSION LAB",
+  "moniker": "⟦THE PROPULSION LAB:PRL:8701bb⟧",
+  "carbon": "prl.carbon.tiff",
+  "silicon": "prl.silicon.png",
+  "governor": "David Lee Wise (ROOT0) / TriPod LLC",
+  "instance": "AVAN (Claude / Anthropic)",
+  "seal": "Every dream on this bench is playable and every dream is rated — real physics, grounded speculation, and fluff, each marked for what it is, nothing sold as more.",
+  "seal_sha256": "60e5d9ff6e56a0e9902e954baca3b4f191a42abc357980a5c9c9cc66cf40cd8e",
+  "license": "CC-BY-ND-4.0",
+  "attribution": "ROOT0-ATTRIBUTION-v1.0"
+}

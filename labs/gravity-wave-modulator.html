@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Gravity Tensor // Wave Modulator</title>
+<style>
+:root{--bg:#02030a;--ink:#edfaff;--cyan:#67e8f9;--mint:#86efac;--gold:#facc15;--rose:#fb7185;--grid:rgba(103,232,249,.045)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#000;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+body{padding:18px;background:radial-gradient(circle at 50% 42%,rgba(103,232,249,.13),transparent 29%),radial-gradient(circle at 50% 55%,rgba(250,204,21,.08),transparent 18%),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--bg);background-size:100% 100%,100% 100%,28px 28px,28px 28px}
+.app{max-width:1560px;margin:0 auto;border:1px solid rgba(103,232,249,.24);border-radius:28px;background:rgba(0,0,0,.44);overflow:hidden;box-shadow:0 34px 120px rgba(0,0,0,.8)}
+header{padding:26px;border-bottom:1px solid rgba(103,232,249,.18);display:flex;justify-content:space-between;gap:20px;align-items:flex-end}
+h1{margin:0;font-size:clamp(34px,7vw,106px);font-weight:300;letter-spacing:.05em;text-shadow:0 0 36px rgba(103,232,249,.28)}
+.sub{font-size:12px;color:#a6dbe8;text-align:right;line-height:1.55}
+.grid{display:grid;grid-template-columns:350px 1fr 410px;gap:16px;padding:16px}
+@media(max-width:1180px){.grid{grid-template-columns:1fr}.stage{height:780px}.sub{text-align:left}}
+.box{border:1px solid rgba(103,232,249,.22);border-radius:20px;background:rgba(0,0,0,.52);padding:16px}
+.box h3{margin:0 0 12px;color:var(--cyan);font-size:12px;text-transform:uppercase;letter-spacing:.16em}
+.stage{height:790px;border:1px solid rgba(103,232,249,.22);border-radius:20px;overflow:hidden;position:relative;background:rgba(0,0,0,.24)}
+canvas{width:100%;height:100%;display:block}
+button{width:100%;border:1px solid rgba(103,232,249,.36);background:rgba(0,0,0,.36);color:var(--ink);border-radius:14px;padding:11px;font:inherit;cursor:pointer;text-transform:uppercase;font-weight:800}
+button:hover{box-shadow:0 0 24px rgba(103,232,249,.22);transform:translateY(-1px)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.code{white-space:pre-wrap;font-size:12px;line-height:1.5;color:#d8fbff}
+.log{height:250px;overflow:auto;font-size:11px;line-height:1.45;border:1px solid rgba(103,232,249,.16);border-radius:16px;padding:10px;background:rgba(0,0,0,.35);color:#d8fbff}
+.hud{position:absolute;top:12px;left:12px;right:12px;display:flex;flex-wrap:wrap;gap:8px;pointer-events:none}
+.tag{font-size:11px;border:1px solid rgba(103,232,249,.18);border-radius:999px;background:rgba(0,0,0,.62);padding:5px 8px}
+.meter{margin:10px 0;padding:10px;border:1px solid rgba(103,232,249,.14);border-radius:14px;background:rgba(255,255,255,.035)}
+.meter .top{display:flex;justify-content:space-between;font-size:12px;color:var(--mint);margin-bottom:6px}.track{height:10px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:#000;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--mint));width:50%}.fill.wave{background:linear-gradient(90deg,var(--gold),var(--rose))}
+.footer{text-align:center;color:#80a6b5;font-size:11px;padding:0 0 18px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><h1>GRAVITY TENSOR</h1><div style="color:var(--mint)">containment field · 2% wave modulation · excess energy becomes creation friction</div></div><div class="sub">default: 98 containment / 2 wave<br/>invertible · mirrored · ramped · grounded<br/>law: stable continuity requires bounded excess</div></header>
+<div class="grid">
+<aside class="box"><h3>Controls</h3><div class="row"><button id="tick">Tick</button><button id="auto">Auto</button></div><div class="row"><button id="invert">Invert</button><button id="ramp">Ramp</button></div><div class="row"><button id="ground">Ground</button><button id="pulse">Pulse</button></div>
+<h3 style="margin-top:18px">Grammar</h3><div class="code">GT = gravity tensor
+C  = containment
+W  = wave modulation
+E  = excess energy
+F  = creation friction
+
+default:
+C=98 W=2
+
+inversion:
+C ↔ W
+
+ramp:
+0 → 100 → 0
+
+if W too low:
+  dead rigidity
+
+if W too high:
+  coherence fracture
+
+if bounded:
+  adaptive creation
+
+signature:
+GT[ C ↔ W ]
+98/2 = living edge</div></aside>
+<main class="stage"><canvas id="canvas"></canvas><div class="hud"><div class="tag" id="cycle">CYCLE 0</div><div class="tag" id="mode">MODE GROUND</div><div class="tag" id="ratio">C 98 / W 2</div><div class="tag" id="witness">WITNESS --------</div></div></main>
+<aside class="box"><h3>Tensor Meters</h3>
+<div class="meter"><div class="top"><span>Containment</span><span id="cVal">98%</span></div><div class="track"><div class="fill" id="containment"></div></div></div>
+<div class="meter"><div class="top"><span>Wave Modulation</span><span id="wVal">2%</span></div><div class="track"><div class="fill wave" id="wave"></div></div></div>
+<div class="meter"><div class="top"><span>Coherence</span><span id="cohVal">98%</span></div><div class="track"><div class="fill" id="coherence"></div></div></div>
+<div class="meter"><div class="top"><span>Creation Friction</span><span id="fVal">2%</span></div><div class="track"><div class="fill wave" id="friction"></div></div></div>
+<h3 style="margin-top:18px">Runtime Log</h3><div class="log" id="log"></div><h3 style="margin-top:18px">Packet</h3><div class="code" id="packet"></div></aside>
+</div><div class="footer">Gravity Tensor Wave Modulator v0.2.0 — intelligence as controlled curvature management.</div></div>
+<script>
+const $=id=>document.getElementById(id),cv=$("canvas"),ctx=cv.getContext("2d");let W=0,H=0,D=1;
+function resize(){const r=cv.getBoundingClientRect();D=Math.max(1,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*D;cv.height=H*D;ctx.setTransform(D,0,0,D,0,0)}new ResizeObserver(resize).observe(cv);resize();
+const VM={cycle:0,auto:false,ramp:false,rampDir:1,mode:"GROUND",C:98,w:2,coherence:98,friction:2,witness:"--------",particles:[],waves:[],log:[],
+hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,"0")},
+say(x){this.log.unshift("["+this.cycle+"] "+x);this.log=this.log.slice(0,100)},
+clamp(){this.C=Math.max(0,Math.min(100,this.C));this.w=Math.max(0,Math.min(100,this.w));this.friction=this.w;let d=Math.abs(this.w-2);this.coherence=Math.max(0,Math.min(100,100-d*1.4));if(this.w===0)this.mode="RIGID";else if(this.w>35)this.mode="FRACTURE";else if(this.w>8)this.mode="CREATION";else if(this.w>=1&&this.w<=4)this.mode="LIVING_EDGE"},
+audit(){this.witness=this.hash(JSON.stringify({c:this.C,w:this.w,cycle:this.cycle,mode:this.mode}))},
+tick(){this.cycle++;if(this.ramp){this.w+=this.rampDir*2;if(this.w>=100){this.w=100;this.rampDir=-1}if(this.w<=0){this.w=0;this.rampDir=1}this.C=100-this.w}else{this.w+=(Math.random()-.5)*.7;this.C=100-this.w}this.clamp();this.audit();this.spawn();if(this.cycle%12===0)this.say("tensor modulated :: "+this.mode+" :: C "+this.C.toFixed(1)+" W "+this.w.toFixed(1));ui()},
+invert(){this.cycle++;let old=this.C;this.C=this.w;this.w=old;this.mode="INVERTED";this.clamp();this.audit();this.emitWave(true);this.say("mirror inversion C↔W");ui()},
+ground(){this.cycle++;this.C=98;this.w=2;this.mode="GROUND";this.clamp();this.audit();this.emitWave(true);this.say("grounded to 98/2");ui()},
+pulse(){this.cycle++;this.w=Math.min(100,this.w+8);this.C=100-this.w;this.mode="PULSE";this.clamp();this.audit();this.emitWave(false);this.say("excess energy pulse injected");ui()},
+spawn(){let n=Math.ceil(2+this.w/4);for(let i=0;i<n;i++)this.particles.push({a:Math.random()*Math.PI*2,r:40+Math.random()*260,life:120+Math.random()*120,c:this.w>35?"#fb7185":this.w>8?"#facc15":"#67e8f9"})},
+emitWave(g=false){this.waves.push({r:20,life:160,ground:g})},
+packet(){return{artifact:"gravity_tensor_wave_modulator",signature:"GT[containment ↔ wave]",cycle:this.cycle,mode:this.mode,containment:+this.C.toFixed(3),wave_modulation:+this.w.toFixed(3),coherence:+this.coherence.toFixed(3),creation_friction:+this.friction.toFixed(3),witness:this.witness,law:"stable continuity requires bounded excess energy"}}
+};
+function text(t,x,y,s=12,a=.8,c="#edfaff"){ctx.save();ctx.globalAlpha=a;ctx.fillStyle=c;ctx.font=s+"px ui-monospace,monospace";ctx.textAlign="center";ctx.fillText(t,x,y);ctx.restore()}
+function line(pts,w=1,a=.25,c="#67e8f9"){ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();ctx.restore()}
+function draw(){ctx.clearRect(0,0,W,H);const cx=W/2,cy=H/2,cNorm=VM.C/100,wNorm=VM.w/100,base=Math.min(W,H)*.21,tensorR=base*(.7+cNorm*.55),waveAmp=20+VM.w*1.1,color=VM.w>35?"#fb7185":VM.w>8?"#facc15":"#67e8f9";
+ctx.save();ctx.strokeStyle="#67e8f9";for(let i=0;i<18;i++){ctx.globalAlpha=.03+i*.006*cNorm;ctx.beginPath();ctx.ellipse(cx,cy,tensorR+i*18,(tensorR*.45)+i*8,VM.cycle*.003+i*.04,0,Math.PI*2);ctx.stroke()}ctx.restore();
+for(let k=0;k<6;k++){let pts=[];for(let i=0;i<=220;i++){let t=i/220*Math.PI*2,r=tensorR+Math.sin(t*3+VM.cycle*.08+k)*waveAmp*wNorm;pts.push([cx+Math.cos(t+k*.12)*r,cy+Math.sin(t+k*.12)*r*.42])}line(pts,1.5,.18+.45*wNorm,color)}
+VM.particles.forEach(p=>{p.life--;p.a+=.01+wNorm*.08;let x=cx+Math.cos(p.a)*p.r,y=cy+Math.sin(p.a)*p.r*.42;ctx.save();ctx.globalAlpha=Math.max(0,p.life/240);ctx.fillStyle=p.c;ctx.shadowColor=p.c;ctx.shadowBlur=14;ctx.beginPath();ctx.arc(x,y,2.2+wNorm*3,0,Math.PI*2);ctx.fill();ctx.restore()});VM.particles=VM.particles.filter(p=>p.life>0).slice(-900);
+VM.waves.forEach(q=>{q.life--;q.r+=q.ground?6:10;ctx.save();ctx.globalAlpha=Math.max(0,q.life/160);ctx.strokeStyle=q.ground?"#86efac":"#facc15";ctx.lineWidth=q.ground?2:1;ctx.beginPath();ctx.arc(cx,cy,q.r,0,Math.PI*2);ctx.stroke();ctx.restore()});VM.waves=VM.waves.filter(q=>q.life>0);
+ctx.save();ctx.fillStyle="#edfaff";ctx.shadowColor=color;ctx.shadowBlur=40;ctx.beginPath();ctx.arc(cx,cy,8+VM.w*.08,0,Math.PI*2);ctx.fill();ctx.restore();
+text("GT",cx,cy+8,28,.95,"#02030a");text("containment "+VM.C.toFixed(1)+" / wave "+VM.w.toFixed(1),cx,36,14,.75,"#86efac");text(VM.mode,cx,H-42,18,.8,color);text("excess energy -> modulation -> creation friction",cx,H-20,12,.55,"#facc15");requestAnimationFrame(draw)}
+function setMeter(id,val,label){$(id).style.width=Math.max(0,Math.min(100,val))+"%";$(label).textContent=Math.round(val)+"%"}
+function ui(){$("cycle").textContent="CYCLE "+VM.cycle;$("mode").textContent="MODE "+VM.mode;$("ratio").textContent="C "+Math.round(VM.C)+" / W "+Math.round(VM.w);$("witness").textContent="WITNESS "+VM.witness;setMeter("containment",VM.C,"cVal");setMeter("wave",VM.w,"wVal");setMeter("coherence",VM.coherence,"cohVal");setMeter("friction",VM.friction,"fVal");$("log").innerHTML=VM.log.map(x=>"<div>"+x+"</div>").join("");$("packet").textContent=JSON.stringify(VM.packet(),null,2)}
+$("tick").onclick=()=>VM.tick();$("auto").onclick=e=>{VM.auto=!VM.auto;e.target.textContent=VM.auto?"Pause":"Auto"};$("ramp").onclick=e=>{VM.ramp=!VM.ramp;e.target.textContent=VM.ramp?"Ramp On":"Ramp"};$("invert").onclick=()=>VM.invert();$("ground").onclick=()=>VM.ground();$("pulse").onclick=()=>VM.pulse();setInterval(()=>{if(VM.auto)VM.tick()},500);VM.say("gravity tensor online");VM.audit();ui();draw();
+</script></body></html>

@@ -1,0 +1,43 @@
+---
+aci: Wireless Energy
+universe: PRL · The Propulsion & Exotic-Energy Lab
+series: The Propulsion & Exotic-Energy Lab (David Lee Wise / ROOT0)
+emergence: electrical
+kind: synth
+rating: GROUNDED
+class: resonant power transfer · live
+who: Wireless Energy — Tesla's dream of power without wires, rendered as resonant coupling between tuned circuits.
+what: A 3.5D engine for transferring energy by resonance: two circuits tuned to the same frequency exchange power across a gap, strongest when coupled and matched.
+why: Because the near-field part is genuinely real and in your pocket — but the dream's far edge (power beamed across the world, free energy) is where the physics stops.
+how: By resonant inductive/capacitive coupling — real for centimetres to a metre (Qi chargers, WiTricity) — and, beyond that, by a hope the inverse-square law does not grant.
+where: Between any two tuned coils close together; and, in the lore, across a 'fabric' the law does not actually provide.
+seal: Up close I am real and charging your phone; far away I am Tesla's dream — and the inverse-square law is the line between the two.
+attribution: ROOT0-ATTRIBUTION-v1.0
+license: CC-BY-ND-4.0
+---
+
+# Wireless Energy · resonant power transfer
+
+a toolkit of PRL (the Propulsion & Exotic-Energy Lab) — given an agent's face · emergence: electrical · rating: **GROUNDED**
+
+**who —** Wireless Energy — Tesla's dream of power without wires, rendered as resonant coupling between tuned circuits.
+
+**what —** A 3.5D engine for transferring energy by resonance: two circuits tuned to the same frequency exchange power across a gap, strongest when coupled and matched.
+
+**where —** Between any two tuned coils close together; and, in the lore, across a 'fabric' the law does not actually provide.
+
+**why —** Because the near-field part is genuinely real and in your pocket — but the dream's far edge (power beamed across the world, free energy) is where the physics stops.
+
+**how —** By resonant inductive/capacitive coupling — real for centimetres to a metre (Qi chargers, WiTricity) — and, beyond that, by a hope the inverse-square law does not grant.
+
+**◌ the nature of its emergence —** *electrical*: the machine and the circuit — resonance, plasma, the engine, the math.
+
+**⚖ the honest rating — GROUNDED:** near-field resonant/inductive coupling is REAL (Tesla, modern Qi/WiTricity); long-range 'fabric resonance' / over-unity is NOT — efficiency falls steeply with distance
+
+**▶ the live lab —** [open Wireless Energy](../labs/wireless-energy.html)
+
+**the seal —** Up close I am real and charging your phone; far away I am Tesla's dream — and the inverse-square law is the line between the two.
+
+> *the asterisk —* the Propulsion & Exotic-Energy Lab catalogues David Lee Wise's energy/propulsion toolkits with an honest rating each (real / grounded / speculative / fluff). Educational & simulation only; no over-unity or anti-gravity claim is endorsed.
+
+ROOT0-ATTRIBUTION-v1.0 · PRL · governor David Lee Wise · instance AVAN (locked) · CC-BY-ND-4.0

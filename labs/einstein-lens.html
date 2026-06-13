@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Einstein Lens Toolkit v1.0</title>
+<style>
+:root{--bg:#050510;--fg:#e0e8ff;--cyan:#00d4ff;--red:#ff3060;--blue:#4080ff;--green:#00ff80;--yellow:#ffcc00;--dim:#303050;--purple:#a040ff;}
+*{box-sizing:border-box;font-family:'Courier New',monospace;}
+body{margin:0;padding:20px;background:var(--bg);color:var(--fg);min-height:100vh;background-image:radial-gradient(circle at 20% 50%,rgba(64,0,128,0.2) 0%,transparent 50%),radial-gradient(circle at 80% 50%,rgba(0,64,128,0.2) 0%,transparent 50%);}
+h1{text-align:center;color:var(--cyan);text-shadow:0 0 20px var(--cyan);margin:0 0 10px 0;font-size:28px;}
+.subtitle{text-align:center;color:var(--dim);margin-bottom:30px;font-size:13px;letter-spacing:2px;}
+.container{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.panel{background:rgba(10,10,30,0.8);border:1px solid var(--purple);border-radius:12px;padding:20px;box-shadow:0 0 30px rgba(160,64,255,0.2);backdrop-filter:blur(10px);}
+.panel h2{margin:0 0 15px 0;color:var(--yellow);font-size:16px;border-bottom:1px solid var(--purple);padding-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
+label{display:block;margin:12px 0 6px;color:var(--cyan);font-size:11px;text-transform:uppercase;letter-spacing:1px;}
+input{width:100%;padding:10px;background:#000008;border:1px solid var(--dim);color:var(--fg);border-radius:6px;font-size:14px;transition:all 0.3s;}
+input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+button{width:100%;padding:14px;margin-top:18px;background:linear-gradient(135deg,var(--cyan),var(--blue));color:var(--bg);border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:14px;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px;}
+button:hover{box-shadow:0 0 25px var(--cyan);transform:translateY(-2px);}
+button:active{transform:translateY(0);}
+.output{background:#000008;border:1px solid var(--dim);border-radius:6px;padding:15px;margin-top:15px;font-size:12px;min-height:120px;word-break:break-word;line-height:1.6;}
+canvas{width:100%;border-radius:6px;background:#000008;border:1px solid var(--dim);margin-top:15px;}
+.formula{color:var(--purple);font-size:11px;margin:8px 0;font-family:'Courier New',monospace;}
+.result{color:var(--green);font-weight:bold;}
+.full{grid-column:1/-1;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:15px;}
+.metric{background:#000008;border:1px solid var(--dim);border-radius:6px;padding:12px;text-align:center;}
+.metric-value{font-size:24px;color:var(--cyan);font-weight:bold;}
+.metric-label{font-size:10px;color:var(--dim);text-transform:uppercase;margin-top:5px;}
+@media(max-width:968px){.container{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<h1>EINSTEIN LENS TOOLKIT</h1>
+<div class="subtitle">GRAVITATIONAL LENSING | FABRIC WARP | 4₈×4₈×1₈ COLLAPSE | TIME DILATION</div>
+<div class="container">
+  <div class="panel">
+    <h2>1. Lens Parameters</h2>
+    <label>Lens Mass (Solar Masses)</label>
+    <input type="number" id="mass" value="1e12" step="1e10">
+    <div class="formula">M = mass = fabric compression = )))</div>
+    
+    <label>Source Distance (Mpc)</label>
+    <input type="number" id="ds" value="1000" step="100">
+    <div class="formula">D_s = source to observer</div>
+    
+    <label>Lens Distance (Mpc)</label>
+    <input type="number" id="dl" value="500" step="50">
+    <div class="formula">D_l = lens to observer</div>
+    
+    <label>Impact Parameter (kpc)</label>
+    <input type="number" id="b" value="10" step="1">
+    <div class="formula">b = closest approach = fabric offset</div>
+    
+    <button onclick="calculate()">COMPUTE LENSING</button>
+    <div class="output" id="lensOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Time Dilation</h2>
+    <div class="formula">Δt = fabric breath rate = 4₈</div>
+    <div class="formula">Low freq = ))) = -1₈ = gravity well = slow time</div>
+    <div class="formula">High freq = (((( = +1₈ = flat space = fast time</div>
+    
+    <div class="grid3">
+      <div class="metric">
+        <div class="metric-value" id="tdFactor">1.00</div>
+        <div class="metric-label">Dilation Factor</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="schwarzschild">0</div>
+        <div class="metric-label">R_s (km)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" id="einstein">0</div>
+        <div class="metric-label">θ_E (arcsec)</div>
+      </div>
+    </div>
+    
+    <canvas id="dilationViz" width="400" height="200"></canvas>
+  </div>
+
+  <div class="panel full">
+    <h2>3. Fabric Warp Visualization</h2>
+    <canvas id="warpViz" width="800" height="400"></canvas>
+    <div class="formula">Mass = ))) = fabric compression = red shift = -1₈ = past</div>
+    <div class="formula">Void = (((( = fabric expansion = blue shift = +1₈ = future</div>
+    <div class="formula">You = 0.0.0₈ = 1₈ = fixed = witness = 4₈ = .</div>
+  </div>
+
+  <div class="panel">
+    <h2>4. Wormhole Collapse</h2>
+    <div class="formula">4₈ × 4₈ × 1₈ = 0 = 1 = witness collapse</div>
+    <div class="formula">4 × 4 × 1 = 20₈ = 16₁₀ = 10000₂ = overflow</div>
+    <div class="formula">5th bit = breach = !!! = wormhole open</div>
+    <button onclick="checkCollapse()">CHECK 4₈×4₈×1₈</button>
+    <div class="output" id="collapseOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>5. 0=1 Analyzer</h2>
+    <div class="formula">0 = void = silence = 0.0.0₈ = balanced</div>
+    <div class="formula">1 = signal = sound = 1₈ = strike = S</div>
+    <div class="formula">0 = 1 = zero crossing = dB/dt = 0 = NOW</div>
+    <button onclick="analyze01()">ANALYZE 0=1</button>
+    <div class="output" id="analyzeOut"></div>
+  </div>
+</div>
+
+<script>
+const G = 6.67430e-11;
+const c = 299792458;
+const M_sun = 1.98847e30;
+const pc = 3.0856775814913673e16;
+const arcsec_rad = 4.84813681109536e-6;
+
+function calculate(){
+  const M = parseFloat(document.getElementById('mass').value) * M_sun;
+  const Ds = parseFloat(document.getElementById('ds').value) * 1e6 * pc;
+  const Dl = parseFloat(document.getElementById('dl').value) * 1e6 * pc;
+  const b = parseFloat(document.getElementById('b').value) * 1e3 * pc;
+  
+  const Dls = Ds - Dl;
+  const Rs = 2 * G * M / (c * c);
+  const theta_E = Math.sqrt(4 * G * M * Dls / (c * c * Dl * Ds));
+  const theta_E_arcsec = theta_E / arcsec_rad;
+  
+  const beta = b / Dl;
+  const theta1 = 0.5 * (beta + Math.sqrt(beta*beta + 4*theta_E*theta_E));
+  const theta2 = 0.5 * (beta - Math.sqrt(beta*beta + 4*theta_E*theta_E));
+  const mu1 = Math.abs(1 / (1 - (theta_E/theta1)**4));
+  const mu2 = Math.abs(1 / (1 - (theta_E/theta2)**4));
+  
+  const tdFactor = 1 / Math.sqrt(1 - Rs / (Dl));
+  
+  document.getElementById('tdFactor').textContent = tdFactor.toFixed(3);
+  document.getElementById('schwarzschild').textContent = (Rs/1000).toExponential(2);
+  document.getElementById('einstein').textContent = theta_E_arcsec.toExponential(2);
+  
+  document.getElementById('lensOut').innerHTML = `
+    <strong class="result">Einstein Radius:</strong> θ_E = ${theta_E_arcsec.toFixed(3)} arcsec<br>
+    <strong class="result">Schwarzschild:</strong> R_s = ${(Rs/1000).toFixed(2)} km<br>
+    <strong class="result">Image 1:</strong> θ₁ = ${(theta1/arcsec_rad).toFixed(3)} arcsec, μ₁ = ${mu1.toFixed(2)}<br>
+    <strong class="result">Image 2:</strong> θ₂ = ${(theta2/arcsec_rad).toFixed(3)} arcsec, μ₂ = ${mu2.toFixed(2)}<br>
+    <strong class="result">Time Dilation:</strong> ${tdFactor.toFixed(6)}x slower<br><br>
+    <span class="formula">Fabric: ))) = -1₈ = mass compresses = red shift</span><br>
+    <span class="formula">Light bends: )))S(((( = past→strike→future</span>
+  `;
+  
+  drawDilation(tdFactor);
+  drawWarp(M / M_sun, theta_E_arcsec);
+}
+
+function drawDilation(factor){
+  const canvas = document.getElementById('dilationViz');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#000008';
+  ctx.fillRect(0,0,w,h);
+  
+  ctx.strokeStyle = '#00d4ff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for(let x=0;x<w;x++){
+    const r = x / w;
+    const y = h/2 + Math.sin(r * Math.PI * 4) * (h/4) / factor;
+    if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  
+  ctx.fillStyle = '#ffcc00';
+  ctx.font = '12px Courier New';
+  ctx.fillText(`Time dilation: ${factor.toFixed(3)}x`, 10, 20);
+  ctx.fillText(`4₈ = . = witness rate slows`, 10, 35);
+}
+
+function drawWarp(massSol, einsteinRadius){
+  const canvas = document.getElementById('warpViz');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#000008';
+  ctx.fillRect(0,0,w,h);
+  
+  const cx = w/2, cy = h/2;
+  const scale = Math.log10(massSol) * 10;
+  
+  for(let r=20;r<w/2;r+=20){
+    ctx.strokeStyle = `rgba(64,0,255,${1-r/(w/2)})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for(let a=0;a<Math.PI*2;a+=0.1){
+      const warp = scale / (1 + r/50);
+      const x = cx + r * Math.cos(a);
+      const y = cy + r * Math.sin(a) - warp;
+      if(a===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  
+  const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,scale*2);
+  grad.addColorStop(0,'rgba(255,0,64,0.8)');
+  grad.addColorStop(0.5,'rgba(160,64,255,0.4)');
+  grad.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx,cy,scale*2,0,Math.PI*2);
+  ctx.fill();
+  
+  ctx.fillStyle = '#00d4ff';
+  ctx.beginPath();
+  ctx.arc(cx,cy,5,0,Math.PI*2);
+  ctx.fill();
+  
+  ctx.fillStyle = '#e0e8ff';
+  ctx.font = '14px Courier New';
+  ctx.fillText(`M = ${massSol.toExponential(2)} M☉`, 20, 30);
+  ctx.fillText(`))) = -1₈ = SINK = PAST`, 20, 50);
+  ctx.fillText(`θ_E = ${einsteinRadius.toFixed(2)}"`, 20, 70);
+  ctx.fillText(`You = 0.0.0₈ = 1₈ = FIXED`, cx-60, cy+scale*2+20);
+}
+
+function checkCollapse(){
+  const result = 4 * 4 * 1;
+  const oct = result.toString(8);
+  const bin = result.toString(2);
+  const overflow = bin.length > 4;
+  document.getElementById('collapseOut').innerHTML = `
+    <strong class="result">4₈ × 4₈ × 1₈ = ${oct}₈ = ${result}₁₀ = ${bin}₂</strong><br><br>
+    4₈ = 100₂ = 3 bits<br>
+    4₈ × 4₈ = 20₈ = 16₁₀ = 10000₂ = 5 bits<br>
+    5th bit = OVERFLOW = BREACH<br><br>
+    <strong class="result">Result: 0 = 1 = WITNESS COLLAPSE</strong><br>
+    Status: ${overflow?'!!! WORMHOLE OPEN !!!':'STABLE'}<br>
+    <span class="formula">4₈ = . = 1×4-1 = 4 = 0 = 1</span>
+  `;
+}
+
+function analyze01(){
+  document.getElementById('analyzeOut').innerHTML = `
+    <strong class="result">0 = VOID = 0.0.0₈ = BALANCED</strong><br>
+    Silence = no signal = fabric flat = (())<br><br>
+    <strong class="result">1 = STRIKE = 1₈ = S = SEED</strong><br>
+    Sound = signal = fabric curves = )))S((((<br><br>
+    <strong class="result">0 = 1 = ZERO CROSSING</strong><br>
+    dB/dt = 0 = inflection = NOW<br>
+    Past ))) → Strike S → Future ((((<br>
+    -1₈ + 1₈ + 1₈ = 1₈ = CYCLE<br><br>
+    <span class="formula">You = 1₈ = fixed = don't move</span><br>
+    <span class="formula">Fabric moves = )))((S))(((( = time</span>
+  `;
+}
+
+calculate();
+</script>
+</body>
+</html>

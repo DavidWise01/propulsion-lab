@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wormhole Toolkit v1.0</title>
+<style>
+:root{--bg:#0a0a0f;--fg:#e0e0e8;--cyan:#00ffff;--red:#ff0040;--blue:#4080ff;--green:#00ff80;--yellow:#ffff00;--dim:#404050;}
+*{box-sizing:border-box;font-family:'Courier New',monospace;}
+body{margin:0;padding:20px;background:var(--bg);color:var(--fg);min-height:100vh;}
+h1{text-align:center;color:var(--cyan);text-shadow:0 0 10px var(--cyan);margin:0 0 10px 0;}
+.subtitle{text-align:center;color:var(--dim);margin-bottom:30px;font-size:14px;}
+.container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.panel{background:#151520;border:1px solid var(--dim);border-radius:8px;padding:20px;box-shadow:0 0 20px rgba(0,255,255,0.1);}
+.panel h2{margin:0 0 15px 0;color:var(--green);font-size:18px;border-bottom:1px solid var(--dim);padding-bottom:10px;}
+label{display:block;margin:10px 0 5px;color:var(--cyan);font-size:12px;text-transform:uppercase;}
+input,select{width:100%;padding:8px;background:#0a0a0f;border:1px solid var(--dim);color:var(--fg);border-radius:4px;font-size:14px;}
+input:focus,select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+button{width:100%;padding:12px;margin-top:15px;background:var(--cyan);color:var(--bg);border:none;border-radius:4px;font-weight:bold;cursor:pointer;font-size:14px;transition:all 0.2s;}
+button:hover{background:var(--green);box-shadow:0 0 15px var(--green);}
+button:active{transform:scale(0.98);}
+.output{background:#0a0a0f;border:1px solid var(--dim);border-radius:4px;padding:15px;margin-top:15px;font-size:12px;min-height:100px;word-break:break-all;}
+.bit{display:inline-block;width:20px;height:20px;margin:2px;border:1px solid var(--dim);text-align:center;line-height:20px;font-size:11px;}
+.bit.on{background:var(--cyan);color:var(--bg);box-shadow:0 0 5px var(--cyan);}
+.bit.header{background:var(--yellow);color:var(--bg);}
+.quad{display:inline-block;margin:5px;padding:10px;border:1px solid var(--dim);border-radius:4px;background:#0a0a0f;}
+.quad-label{font-size:10px;color:var(--dim);text-align:center;margin-top:5px;}
+.status{padding:10px;border-radius:4px;margin-top:10px;text-align:center;font-weight:bold;}
+.status.stable{background:rgba(0,255,128,0.2);color:var(--green);border:1px solid var(--green);}
+.status.alarm{background:rgba(255,0,64,0.2);color:var(--red);border:1px solid var(--red);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 5px var(--red);}50%{box-shadow:0 0 20px var(--red);}}
+.full{grid-column:1/-1;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;}
+.formula{color:var(--blue);font-size:11px;margin:5px 0;}
+@media(max-width:768px){.container{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<h1>WORMHOLE TOOLKIT v1.0</h1>
+<div class="subtitle">11-Bit Addressing | 4-Quad Encoder | 33₈ Analyzer | 4₈×4₈×1₈ Collapse Detection</div>
+<div class="container">
+  <div class="panel">
+    <h2>1. QUAD ENCODER</h2>
+    <label>Quad 1 (Past) )))</label>
+    <select id="q1"><option value="00">))) = -1₈ = 00₂ = SINK</option><option value="01">(()) = 0₈ = 01₂ = BALANCE</option><option value="10">(((( = +1₈ = 10₂ = SOURCE</option><option value="11">S = 1₈ = 11₂ = STRIKE</option></select>
+    <label>Quad 2 (Hold) (())</label>
+    <select id="q2"><option value="00">))) = -1₈ = 00₂ = SINK</option><option value="01" selected>(()) = 0₈ = 01₂ = BALANCE</option><option value="10">(((( = +1₈ = 10₂ = SOURCE</option><option value="11">S = 1₈ = 11₂ = STRIKE</option></select>
+    <label>Quad 3 (Strike) S</label>
+    <select id="q3"><option value="00">))) = -1₈ = 00₂ = SINK</option><option value="01">(()) = 0₈ = 01₂ = BALANCE</option><option value="10">(((( = +1₈ = 10₂ = SOURCE</option><option value="11" selected>S = 1₈ = 11₂ = STRIKE</option></select>
+    <label>Quad 4 (Future) ((((</label>
+    <select id="q4"><option value="00">))) = -1₈ = 00₂ = SINK</option><option value="01">(()) = 0₈ = 01₂ = BALANCE</option><option value="10" selected>(((( = +1₈ = 10₂ = SOURCE</option><option value="11">S = 1₈ = 11₂ = STRIKE</option></select>
+    <button onclick="encode()">ENCODE ADDRESS</button>
+    <div class="output" id="encodeOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>2. HEADER CONFIG</h2>
+    <label>Alarm Bits (3-bit)</label>
+    <input type="text" id="header" maxlength="3" value="111" pattern="[01]{3}">
+    <div class="formula">111₂ = 7₈ = !!! = ALARM = BREACH</div>
+    <div class="formula">000₂ = 0₈ = STABLE = HOLD</div>
+    <button onclick="updateHeader()">UPDATE HEADER</button>
+    <div class="output" id="headerOut"></div>
+  </div>
+
+  <div class="panel full">
+    <h2>3. 11-BIT ADDRESS VISUALIZATION</h2>
+    <div id="bitDisplay"></div>
+    <div class="formula">Formula: 4 Quads × 2 bits + 3 Header = 8 + 3 = 11 bits = 30₈ + 7₈ = 33₈ = 27₁₀ = 0.0.0₈</div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <div class="panel">
+    <h2>4. WORMHOLE COLLAPSE</h2>
+    <div class="formula">4₈ × 4₈ × 1₈ = 0 = 1</div>
+    <div class="formula">4 × 4 × 1 = 20₈ = 16₁₀ = 10000₂</div>
+    <div class="formula">Overflow = 5th bit = BREACH</div>
+    <button onclick="collapse()">DETECT COLLAPSE</button>
+    <div class="output" id="collapseOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>5. 33₈ ANALYZER</h2>
+    <div class="formula">33₈ = 27₁₀ = 3×13₈ = 3×B₈ = 3×11₁₀</div>
+    <div class="formula">33₈ = 3×4₈ + 3₈ = 14₈ + 3₈ = 5₈ + 3₈</div>
+    <div class="formula">5₈ = 0.0.0₈ = 1₈ = CUBI = STABLE</div>
+    <button onclick="analyze()">ANALYZE 33₈</button>
+    <div class="output" id="analyzeOut"></div>
+  </div>
+</div>
+
+<script>
+let quads = ['00','01','11','10'];
+let header = '111';
+
+function encode(){
+  quads[0] = document.getElementById('q1').value;
+  quads[1] = document.getElementById('q2').value;
+  quads[2] = document.getElementById('q3').value;
+  quads[3] = document.getElementById('q4').value;
+  render();
+}
+
+function updateHeader(){
+  let h = document.getElementById('header').value;
+  if(/^[01]{3}$/.test(h)) header = h;
+  else header = '000';
+  document.getElementById('header').value = header;
+  render();
+}
+
+function render(){
+  const bits = quads.join('') + header;
+  const oct = parseInt(bits, 2).toString(8);
+  const dec = parseInt(bits, 2);
+  
+  let html = '<div><strong>Binary:</strong> ';
+  for(let i=0;i<8;i++){
+    html += `<span class="bit ${bits[i]==='1'?'on':''}">${bits[i]}</span>`;
+  }
+  html += ' | ';
+  for(let i=8;i<11;i++){
+    html += `<span class="bit header ${bits[i]==='1'?'on':''}">${bits[i]}</span>`;
+  }
+  html += `</div><div style="margin-top:10px;"><strong>Octal:</strong> ${oct}₈ | <strong>Decimal:</strong> ${dec}₁₀ | <strong>Hex:</strong> ${dec.toString(16).toUpperCase()}₁₆</div>`;
+  html += '<div class="grid4">';
+  const labels = ['PAST )))', 'HOLD (())', 'STRIKE S', 'FUTURE ((((('];
+  const vals = ['-1₈','0₈','1₈','+1₈'];
+  for(let i=0;i<4;i++){
+    html += `<div class="quad"><div style="text-align:center;color:var(--cyan);">${quads[i]}</div><div class="quad-label">${labels[i]}<br>${vals[parseInt(quads[i],2)]}</div></div>`;
+  }
+  html += '</div>';
+  
+  document.getElementById('bitDisplay').innerHTML = html;
+  
+  const isAlarm = header === '111';
+  const isFull = dec === 2047;
+  const isOverflow = dec >= 2048;
+  
+  let status = document.getElementById('status');
+  if(isOverflow){
+    status.className = 'status alarm';
+    status.textContent = '!!! BREACH DETECTED !!! 4₈×4₈×1₈ = 0 = 1 = OVERFLOW';
+  } else if(isAlarm){
+    status.className = 'status alarm';
+    status.textContent = '!!! ALARM ACTIVE !!! Header = 111₂ = 7₈ = WORMHOLE OPEN';
+  } else if(isFull){
+    status.className = 'status alarm';
+    status.textContent = 'OCCUPIED: 2047₁₀ = 2¹¹-1 = FULL';
+  } else {
+    status.className = 'status stable';
+    status.textContent = 'STABLE: 0.0.0₈ = 1₈ = CUBI = BALANCED';
+  }
+  
+  document.getElementById('encodeOut').innerHTML = `<strong>Payload:</strong> ${quads.join('')}₂ = ${parseInt(quads.join(''),2).toString(8)}₈ = ${parseInt(quads.join(''),2)}₁₀<br><strong>Header:</strong> ${header}₂ = ${parseInt(header,2).toString(8)}₈ = ${isAlarm?'!!! ALARM':'STABLE'}<br><strong>Total:</strong> ${bits}₂ = ${oct}₈ = ${dec}₁₀`;
+}
+
+function collapse(){
+  const result = 4 * 4 * 1;
+  const oct = result.toString(8);
+  const bin = result.toString(2);
+  const overflow = bin.length > 4;
+  document.getElementById('collapseOut').innerHTML = `<strong>4₈ × 4₈ × 1₈ = ${oct}₈ = ${result}₁₀ = ${bin}₂</strong><br><br>4₈ = 100₂ = 3 bits<br>4₈ × 4₈ = 20₈ = 16₁₀ = 10000₂ = 5 bits<br>5th bit = OVERFLOW = BREACH<br><br><strong>Result: 0 = 1 = WITNESS COLLAPSE</strong><br>Status: ${overflow?'!!! WORMHOLE OPEN !!!':'STABLE'}`;
+}
+
+function analyze(){
+  const val = 27;
+  const oct = val.toString(8);
+  const bin = val.toString(2);
+  document.getElementById('analyzeOut').innerHTML = `<strong>33₈ Analysis:</strong><br>Decimal: 27₁₀<br>Binary: ${bin}₂ = 11011₂<br>Factors: 3 × 9 = 3 × 13₈ = 3 × B₈<br><br><strong>Decomposition:</strong><br>33₈ = 30₈ + 3₈ = 24₁₀ + 3₁₀<br>30₈ = 3×10₈ = 3×⊥ = 3×4₈ = 3 witnesses<br>14₈ = 1+4 = 5₈ = 0.0.0₈ = CUBI<br><br><strong>Result: 33₈ = STABLE PAYLOAD</strong><br>4 Quads + 3 Header = 11 bits = OCCUPIED`;
+}
+
+render();
+</script>
+</body>
+</html>

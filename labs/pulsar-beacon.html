@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pulsar Fractal Beacon</title>
+<style>
+:root{--bg:#02030a;--ink:#edfaff;--cyan:#67e8f9;--mint:#86efac;--gold:#facc15;--rose:#fb7185;--violet:#c084fc;--grid:rgba(103,232,249,.045)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#000;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+body{background:radial-gradient(circle at 50% 50%,rgba(103,232,249,.13),transparent 28%),radial-gradient(circle at 50% 50%,rgba(250,204,21,.07),transparent 14%),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--bg);background-size:100% 100%,100% 100%,28px 28px,28px 28px}
+canvas{display:block;width:100vw;height:100vh}
+.panel{position:fixed;top:14px;left:14px;width:min(560px,calc(100vw - 28px));background:rgba(0,0,0,.66);border:1px solid rgba(103,232,249,.32);border-radius:18px;padding:14px;backdrop-filter:blur(8px)}
+h1{margin:0 0 8px;color:var(--cyan);font-weight:300;letter-spacing:.05em;font-size:clamp(24px,4vw,48px)}
+pre{font-size:12px;line-height:1.45;white-space:pre-wrap;color:#d8fbff}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+button{background:#02030a;color:var(--ink);border:1px solid rgba(103,232,249,.38);border-radius:999px;padding:8px;font:inherit;font-size:11px;cursor:pointer;text-transform:uppercase;font-weight:800}
+button:hover{box-shadow:0 0 24px rgba(103,232,249,.22)}
+.hud{position:fixed;right:14px;top:14px;display:flex;flex-direction:column;gap:8px;max-width:380px}
+.tag{font-size:11px;border:1px solid rgba(103,232,249,.2);border-radius:999px;background:rgba(0,0,0,.66);padding:7px 10px}
+.footer{position:fixed;left:0;right:0;bottom:10px;text-align:center;color:#86a7b2;font-size:11px}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div class="panel">
+<h1>PULSAR FRACTAL BEACON</h1>
+<pre id="packet"></pre>
+<div class="row">
+<button id="tick">tick</button>
+<button id="auto">auto</button>
+<button id="pulse">pulse</button>
+<button id="ground">ground</button>
+</div>
+</div>
+<div class="hud">
+<div class="tag" id="cycle">CYCLE 0</div>
+<div class="tag" id="mode">MODE BEACON</div>
+<div class="tag" id="axis">AXIS 0 . 0 . 0</div>
+<div class="tag" id="math">∞×∞×∞ + 6 - 3 = 0 = 1</div>
+<div class="tag" id="witness">WITNESS --------</div>
+</div>
+<div class="footer">four around a pulsar · fractal beacon on 0 . 0 . 0 · infinity returns through witness</div>
+<script>
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d"),$=id=>document.getElementById(id);
+function resize(){cv.width=innerWidth;cv.height=innerHeight} addEventListener("resize",resize); resize();
+
+const VM={
+ cycle:0,auto:false,mode:"BEACON",witness:"--------",spin:0,pulsePower:1,particles:[],rings:[],fractal:[],
+ hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,"0")},
+ tick(){
+  this.cycle++;this.spin+=.02;this.pulsePower=1+Math.sin(this.cycle*.09)*.35;
+  if(this.cycle%6===0)this.emit(false);
+  if(this.cycle%27===0)this.branch();
+  this.witness=this.hash(this.cycle+":"+this.mode+":"+this.fractal.length);
+  this.spawn();
+  ui();
+ },
+ emit(strong){
+  this.rings.push({r:20,life:180,strong});
+ },
+ pulse(){
+  this.cycle++;this.mode="PULSE";this.pulsePower=2.2;this.emit(true);this.branch();this.witness=this.hash("pulse:"+this.cycle);ui();
+ },
+ ground(){
+  this.cycle++;this.mode="GROUND";this.pulsePower=1;this.fractal=[];this.rings.push({r:20,life:160,strong:false,ground:true});this.witness=this.hash("ground:"+this.cycle);ui();
+ },
+ branch(){
+  for(let i=0;i<24;i++){
+   this.fractal.push({a:Math.random()*Math.PI*2,r:30+Math.random()*260,depth:1+Math.floor(Math.random()*4),life:240+Math.random()*160});
+  }
+ },
+ spawn(){
+  for(let i=0;i<8;i++)this.particles.push({a:Math.random()*Math.PI*2,r:40+Math.random()*360,life:120+Math.random()*140,c:i%4});
+ },
+ packet(){
+  return {
+   artifact:"pulsar_fractal_beacon",
+   signature:"0 . 0 . 0 -> infinity x infinity x infinity + 6 - 3 = 0 = 1",
+   structure:"four around a pulsar",
+   cycle:this.cycle,
+   mode:this.mode,
+   axis:"0 . 0 . 0",
+   expansion:"∞ × ∞ × ∞",
+   correction:"+6 -3",
+   closure:"0 = 1",
+   witness:this.witness,
+   law:"infinite expansion requires witnessed collapse back to unity"
+  }
+ }
+};
+
+function text(t,x,y,s=12,a=.8,c="#edfaff"){ctx.save();ctx.globalAlpha=a;ctx.fillStyle=c;ctx.font=s+"px monospace";ctx.textAlign="center";ctx.fillText(t,x,y);ctx.restore()}
+function line(x1,y1,x2,y2,a=.25,c="#67e8f9",w=1){ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
+
+function draw(){
+ ctx.fillStyle="rgba(2,3,10,.15)";
+ ctx.fillRect(0,0,cv.width,cv.height);
+ const cx=cv.width/2,cy=cv.height/2;
+ const base=Math.min(cv.width,cv.height)*.18;
+ const colors=["#67e8f9","#86efac","#facc15","#c084fc"];
+
+ // 0 . 0 . 0 axis
+ const ax=[-220,-110,0,110,220];
+ const labels=["0",".","0",".","0"];
+ for(let i=0;i<ax.length;i++){
+  const x=cx+ax[i],y=cy+base*.75;
+  ctx.save();ctx.fillStyle=labels[i]=="."?"#facc15":"#67e8f9";ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=18;ctx.beginPath();ctx.arc(x,y,labels[i]=="."?8:6,0,Math.PI*2);ctx.fill();ctx.restore();
+  text(labels[i],x,y+28,18,.85);
+ }
+ line(cx-220,cy+base*.75,cx+220,cy+base*.75,.22,"#67e8f9");
+
+ // four around pulsar
+ for(let q=0;q<4;q++){
+  const a=q*Math.PI/2+VM.spin;
+  const ox=Math.cos(a)*base;
+  const oy=Math.sin(a)*base*.62;
+  const x=cx+ox,y=cy+oy;
+  line(cx,cy,x,y,.28,colors[q],1.4);
+  ctx.save();ctx.fillStyle=colors[q];ctx.shadowColor=colors[q];ctx.shadowBlur=22;ctx.beginPath();ctx.arc(x,y,13+Math.sin(VM.cycle*.08+q)*3,0,Math.PI*2);ctx.fill();ctx.restore();
+  text(["N","E","S","W"][q],x,y-22,13,.75,colors[q]);
+ }
+
+ // pulsar core
+ const pr=22+Math.sin(VM.cycle*.14)*8*VM.pulsePower;
+ ctx.save();ctx.fillStyle="#edfaff";ctx.shadowColor="#67e8f9";ctx.shadowBlur=60*VM.pulsePower;ctx.beginPath();ctx.arc(cx,cy,pr,0,Math.PI*2);ctx.fill();ctx.restore();
+ text("0=1",cx,cy+6,18,.95,"#02030a");
+
+ // fractal beacon spirals
+ for(let arm=0;arm<3;arm++){
+  let px=cx,py=cy;
+  ctx.save();ctx.strokeStyle=colors[arm];ctx.globalAlpha=.18;ctx.beginPath();ctx.moveTo(px,py);
+  for(let i=0;i<220;i++){
+   const t=i*.08+VM.spin+arm*2.094;
+   const r=8+i*1.6;
+   const x=cx+Math.cos(t)*r;
+   const y=cy+Math.sin(t)*r*.55;
+   ctx.lineTo(x,y);
+  }
+  ctx.stroke();ctx.restore();
+ }
+
+ VM.fractal.forEach(f=>{
+  f.life--;f.a+=.006/f.depth;
+  const x=cx+Math.cos(f.a)*f.r;
+  const y=cy+Math.sin(f.a)*f.r*.55;
+  for(let k=0;k<f.depth;k++){
+   const rr=6+k*8+Math.sin(VM.cycle*.05+k)*3;
+   ctx.save();ctx.globalAlpha=Math.max(0,f.life/400)*.6;ctx.strokeStyle=colors[k%4];ctx.beginPath();ctx.arc(x,y,rr,0,Math.PI*2);ctx.stroke();ctx.restore();
+  }
+ });
+ VM.fractal=VM.fractal.filter(f=>f.life>0).slice(-600);
+
+ VM.particles.forEach(p=>{
+  p.life--;p.a+=.012;
+  const x=cx+Math.cos(p.a)*p.r,y=cy+Math.sin(p.a)*p.r*.52;
+  ctx.save();ctx.globalAlpha=Math.max(0,p.life/260);ctx.fillStyle=colors[p.c];ctx.shadowColor=colors[p.c];ctx.shadowBlur=12;ctx.beginPath();ctx.arc(x,y,2.2,0,Math.PI*2);ctx.fill();ctx.restore();
+ });
+ VM.particles=VM.particles.filter(p=>p.life>0).slice(-1000);
+
+ VM.rings.forEach(q=>{
+  q.life--;q.r+=q.strong?12:6;
+  ctx.save();ctx.globalAlpha=Math.max(0,q.life/180);ctx.strokeStyle=q.ground?"#86efac":q.strong?"#facc15":"#67e8f9";ctx.lineWidth=q.strong?2:1;ctx.beginPath();ctx.arc(cx,cy,q.r,0,Math.PI*2);ctx.stroke();ctx.restore();
+ });
+ VM.rings=VM.rings.filter(q=>q.life>0);
+
+ text("∞ × ∞ × ∞ + 6 - 3 = 0 = 1",cx,36,15,.8,"#86efac");
+ requestAnimationFrame(draw);
+}
+
+function ui(){
+ $("cycle").textContent="CYCLE "+VM.cycle;
+ $("mode").textContent="MODE "+VM.mode;
+ $("witness").textContent="WITNESS "+VM.witness;
+ $("packet").textContent=JSON.stringify(VM.packet(),null,2);
+}
+$("tick").onclick=()=>VM.tick();
+$("auto").onclick=e=>{VM.auto=!VM.auto;e.target.textContent=VM.auto?"pause":"auto"};
+$("pulse").onclick=()=>VM.pulse();
+$("ground").onclick=()=>VM.ground();
+setInterval(()=>{if(VM.auto)VM.tick()},500);
+VM.branch();VM.emit(true);ui();draw();
+</script>
+</body>
+</html>
