@@ -4,6 +4,6 @@ slug  : propulsion-lab
 seal  : 60e5d9ff6e56a0e9902e954baca3b4f191a42abc357980a5c9c9cc66cf40cd8e
 prev  : 106b4b337f4a6ae3bc5f04035f1d9981d2655a232c2a95f88053e0a9f46372ec
 link  : ec10415e9d0747f74742197ad47f811cede37292275fc982c84b4371c2e3780f
-head  : 3447d3a0533aaf1e29a8bdc67a9774884fb3ae9dbc8a17064b7a008ca3c4ec90
+head  : 13f9ace173ef2e60af38912ba329b4afcb5a38b84a0e4495e8d30327f8c99cc2
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
